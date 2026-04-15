@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ちりつもスイーツ 販売管理</title>
+<link href="https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@400;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --pink:#E8789A;--pink-dark:#C45A7C;--pink-light:#FDE8EF;--pink-pale:#FFF5F8;
+  --rose:#F4A7B9;--rose-light:#FDEEF3;
+  --cream:#FFF8F0;--cream-dark:#F5ECD8;
+  --mint:#7DC9A8;--mint-light:#E6F7F0;--mint-dark:#4D9E7A;
+  --yellow:#F5C842;--yellow-light:#FFFAE6;
+  --lavender:#B39DDB;--lav-light:#EDE7F6;
+  --white:#fff;--bg:#FFF5F8;
+  --text:#3D1F2E;--text-sub:#9E7089;--border:#F0C8D8;
+  --sw:260px;
+}
+body{font-family:"Noto Sans JP",sans-serif;background:var(--bg);color:var(--text);font-size:17px;min-height:100vh;display:flex}
+
+/* かわいい背景ドット */
+body::before{content:"";position:fixed;inset:0;background-image:radial-gradient(circle,#F4A7B933 1.5px,transparent 1.5px);background-size:28px 28px;pointer-events:none;z-index:0}
+
+/* Sidebar */
+.sidebar{width:var(--sw);min-height:100vh;background:linear-gradient(180deg,#E8789A 0%,#C45A7C 100%);padding:0 0 24px;display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:10}
+.sb{padding:24px 20px 18px;border-bottom:1px solid rgba(255,255,255,.2);margin-bottom:8px;text-align:center}
+.bl{width:80px;height:80px;border-radius:50%;background:var(--white);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;box-shadow:0 4px 14px rgba(196,90,124,.35)}
+.bn{font-family:"Kaisei Decol",serif;font-size:14px;color:#fff;font-weight:700;letter-spacing:.06em;text-shadow:0 1px 4px rgba(0,0,0,.15)}
+.bs{font-size:11px;color:rgba(255,255,255,.65);margin-top:3px}
+.ns{padding:4px 12px}
+.nl{font-size:10px;color:rgba(255,255,255,.5);letter-spacing:.1em;padding:0 10px;margin:12px 0 5px}
+.ni{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:20px;cursor:pointer;color:rgba(255,255,255,.75);font-size:14px;font-weight:500;border:none;background:none;width:100%;text-align:left;transition:all .2s}
+.ni:hover{background:rgba(255,255,255,.15);color:#fff}
+.ni.active{background:rgba(255,255,255,.25);color:#fff;font-weight:700}
+.nic{width:18px;height:18px;flex-shrink:0}
+.su2{margin-top:auto;padding:12px 16px;border-top:1px solid rgba(255,255,255,.2);display:flex;align-items:center;gap:10px}
+.av{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.un{font-size:13px;color:#fff;font-weight:700}
+.us{font-size:11px;color:rgba(255,255,255,.6)}
+
+/* Main */
+.main{margin-left:var(--sw);flex:1;padding:28px 32px;min-height:100vh;position:relative;z-index:1}
+.phr{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:24px}
+.pt{font-size:24px;font-weight:700;font-family:"Kaisei Decol",serif;color:var(--pink-dark)}
+.pt::before{content:"🌸 ";font-size:20px}
+.ps{font-size:12px;color:var(--text-sub);margin-top:4px}
+.db{font-size:12px;color:var(--text-sub);background:var(--white);border:1.5px solid var(--border);border-radius:20px;padding:6px 14px}
+
+/* Cards */
+.card{background:var(--white);border-radius:24px;padding:24px 26px;border:1.5px solid var(--border);box-shadow:0 4px 16px rgba(232,120,154,.08)}
+.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:20px}
+.sc{background:var(--white);border-radius:20px;padding:18px 20px;border:1.5px solid var(--border);box-shadow:0 4px 12px rgba(232,120,154,.08);position:relative;overflow:hidden}
+.sc::after{content:"";position:absolute;bottom:-12px;right:-12px;width:60px;height:60px;border-radius:50%;background:var(--pink-light);opacity:.5}
+.sl{font-size:11px;color:var(--text-sub);margin-bottom:6px;font-weight:500}
+.sv{font-size:26px;font-weight:700;font-family:"Kaisei Decol",serif;color:var(--text);line-height:1}
+.su3{font-size:13px;font-weight:400;color:var(--text-sub)}
+.pb{height:7px;background:var(--pink-light);border-radius:10px;overflow:hidden;margin-top:10px}
+.pf{height:100%;background:linear-gradient(90deg,var(--rose),var(--pink));border-radius:10px}
+.pl{display:flex;justify-content:space-between;font-size:11px;color:var(--text-sub);margin-top:4px}
+
+/* Table */
+.ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:10px;flex-wrap:wrap}
+.ct{font-size:16px;font-weight:700;font-family:"Kaisei Decol",serif;color:var(--pink-dark)}
+.si{padding:8px 13px;border:1.5px solid var(--border);border-radius:20px;font-size:13px;font-family:inherit;background:var(--pink-pale);color:var(--text);outline:none;width:160px}
+.si:focus{border-color:var(--pink);background:var(--white)}
+table{width:100%;border-collapse:collapse}
+thead th{font-size:17px;color:var(--pink-dark);font-weight:700;padding:11px 12px;text-align:left;border-bottom:2px solid var(--pink);white-space:nowrap;background:var(--pink-light)}
+tbody tr{border-bottom:1px solid var(--border)}
+tbody tr:last-child{border-bottom:none}
+tbody td{padding:13px 12px;font-size:17px;vertical-align:middle}
+tbody tr:hover{background:var(--pink-pale)}
+
+/* Badge */
+.badge{display:inline-flex;align-items:center;padding:4px 12px;border-radius:20px;font-size:13px;font-weight:700;white-space:nowrap}
+.bp{background:var(--yellow-light);color:#8A6800;border:1.5px solid var(--yellow)}
+.bk{background:var(--mint-light);color:var(--mint-dark);border:1.5px solid var(--mint)}
+.bsh{background:var(--lav-light);color:#5E35B1;border:1.5px solid var(--lavender)}
+
+/* Buttons */
+.btn{padding:9px 18px;border-radius:20px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;border:none;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+.btp{background:linear-gradient(135deg,var(--pink),var(--pink-dark));color:#fff;box-shadow:0 4px 12px rgba(196,90,124,.3)}
+.btp:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(196,90,124,.4)}
+.bto{background:var(--white);color:var(--pink-dark);border:1.5px solid var(--border)}.bto:hover{background:var(--pink-pale)}
+.bi{width:30px;height:30px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;border:1.5px solid var(--border);background:var(--white);transition:all .2s;flex-shrink:0;color:var(--text-sub)}
+.bi:hover{background:var(--pink-pale);border-color:var(--pink)}
+.big{background:linear-gradient(135deg,var(--mint),var(--mint-dark));border-color:var(--mint);color:#fff;box-shadow:0 3px 10px rgba(77,158,122,.3)}
+.big:hover{transform:translateY(-1px)}
+
+/* Filter */
+.fr{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.fb{padding:6px 16px;border-radius:20px;font-size:13px;font-weight:500;cursor:pointer;border:1.5px solid var(--border);background:var(--white);color:var(--text-sub);font-family:inherit;transition:all .2s}
+.fb:hover{background:var(--pink-pale);border-color:var(--rose);color:var(--pink-dark)}
+.fb.on{background:linear-gradient(135deg,var(--pink),var(--pink-dark));color:#fff;border-color:var(--pink);font-weight:700;box-shadow:0 3px 10px rgba(196,90,124,.25)}
+
+/* Modal */
+.mb{display:none;position:fixed;inset:0;background:rgba(61,31,46,.45);z-index:100;align-items:center;justify-content:center;padding:16px}
+.mb.open{display:flex}
+.modal{background:var(--white);border-radius:24px;padding:24px;width:100%;max-width:520px;max-height:92vh;overflow-y:auto;border:2px solid var(--border);box-shadow:0 8px 32px rgba(196,90,124,.2)}
+.mt{font-size:18px;font-weight:700;font-family:"Kaisei Decol",serif;color:var(--pink-dark);margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+.mc{background:none;border:none;cursor:pointer;font-size:22px;color:var(--text-sub);padding:0;line-height:1}
+.mc:hover{color:var(--pink)}
+.fg{margin-bottom:12px}
+.fl{font-size:13px;font-weight:600;margin-bottom:4px;display:block;color:var(--text-sub)}
+.rq{color:var(--pink);margin-left:2px}
+.fi{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:12px;font-size:15px;font-family:inherit;color:var(--text);background:var(--pink-pale);outline:none;transition:border-color .2s}
+.fi:focus{border-color:var(--pink);background:var(--white)}
+textarea.fi{resize:vertical;min-height:56px}
+.fr2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pg{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px}
+.pcg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pci{border:2px solid var(--border);border-radius:12px;padding:9px 11px;cursor:pointer;transition:all .2s;background:var(--white)}
+.pci:hover{border-color:var(--rose);background:var(--pink-pale)}
+.pci.sel{border-color:var(--pink);background:var(--pink-light)}
+.pci-in{display:flex;align-items:center;gap:8px}
+.pci-in input{width:14px;height:14px;accent-color:var(--pink);flex-shrink:0;cursor:pointer}
+.pn2{font-size:13px;font-weight:600;color:var(--text)}
+.pp2{font-size:12px;color:var(--text-sub)}
+.tb{background:var(--pink-pale);border:1.5px solid var(--border);border-radius:12px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;font-size:15px;margin-bottom:10px}
+.ab{padding:9px 13px;border-radius:12px;font-size:13px;margin-bottom:8px;font-weight:600}
+.ao{background:var(--mint-light);color:var(--mint-dark);border:1px solid var(--mint)}
+.an{background:#FDECEA;color:#C0392B;border:1px solid #FFCDD2}
+.aw{background:var(--yellow-light);color:#8A6800;border:1px solid var(--yellow)}
+.mf{display:flex;gap:10px;justify-content:flex-end;margin-top:16px}
+.dv{height:1.5px;background:var(--border);margin:12px 0}
+
+/* 在庫 */
+.sti{padding:9px 0;border-bottom:1px solid var(--border)}
+.sti:last-child{border-bottom:none}
+.str{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.stn{font-size:15px;font-weight:600}
+.stv{font-size:13px;color:var(--text-sub)}
+.stb{height:8px;background:var(--pink-light);border-radius:10px;overflow:hidden}
+.stf{height:100%;border-radius:10px}
+
+@media(max-width:700px){
+  .sidebar{width:100%;height:auto;position:fixed;bottom:0;top:auto;flex-direction:row;padding:6px 4px;gap:0;justify-content:space-around;min-height:auto;z-index:20;background:linear-gradient(90deg,#E8789A,#C45A7C)}
+  .sb,.su2,.nl{display:none}
+  .ns{padding:0;display:contents}
+  .ni{flex-direction:column;gap:2px;padding:6px 8px;font-size:11px;align-items:center;min-width:56px;border-radius:12px}
+  .main{margin-left:0;margin-bottom:70px;padding:16px 14px}
+  .sg{grid-template-columns:1fr 1fr}
+  .pcg,.fr2,.pg{grid-template-columns:1fr}
+  .si{width:140px}
+  #dl{grid-template-columns:1fr !important}
+  /* スマホでテーブル非表示・カード表示に切り替え */
+  .pc-table{display:none !important}
+  .sp-cards{display:block !important}
+}
+/* カード表示（スマホ専用・PCでは非表示） */
+.sp-cards{display:none}
+.order-card{background:var(--white);border:2px solid var(--border);border-radius:20px;padding:18px;margin-bottom:14px;box-shadow:0 4px 12px rgba(232,120,154,.1)}
+.order-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.order-card-name{font-size:22px;font-weight:700;color:var(--text)}
+.order-card-rname{font-size:18px;color:var(--text-sub);margin-top:2px}
+.order-card-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:19px}
+.order-card-row:last-of-type{border-bottom:none}
+.order-card-lbl{color:var(--text-sub);font-size:17px;min-width:80px}
+.order-card-val{font-weight:600;color:var(--text);text-align:right}
+.order-card-price{font-size:24px;font-weight:700;color:var(--pink-dark)}
+.order-card-actions{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.order-card-actions .bi{width:44px;height:44px;border-radius:14px;font-size:18px}
+
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <div class="sb">
+    <div class="bl">
+      <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
+        <line x1="26" y1="46" x2="26" y2="12" stroke="#E8789A" stroke-width="1.8"/>
+        <line x1="26" y1="12" x2="14" y2="22" stroke="#E8789A" stroke-width="1.4"/>
+        <line x1="26" y1="12" x2="38" y2="22" stroke="#E8789A" stroke-width="1.4"/>
+        <line x1="14" y1="22" x2="7" y2="30" stroke="#E8789A" stroke-width="1.2"/>
+        <line x1="14" y1="22" x2="19" y2="30" stroke="#E8789A" stroke-width="1.2"/>
+        <line x1="38" y1="22" x2="33" y2="30" stroke="#E8789A" stroke-width="1.2"/>
+        <line x1="38" y1="22" x2="45" y2="30" stroke="#E8789A" stroke-width="1.2"/>
+        <line x1="26" y1="24" x2="20" y2="32" stroke="#E8789A" stroke-width="1.2"/>
+        <line x1="26" y1="24" x2="32" y2="32" stroke="#E8789A" stroke-width="1.2"/>
+        <circle cx="7" cy="30" r="4" fill="#FDEEF3"/><circle cx="7" cy="30" r="2" fill="#E8789A"/>
+        <circle cx="19" cy="30" r="4" fill="#FDEEF3"/><circle cx="19" cy="30" r="2" fill="#E8789A"/>
+        <circle cx="33" cy="30" r="4" fill="#FDEEF3"/><circle cx="33" cy="30" r="2" fill="#E8789A"/>
+        <circle cx="45" cy="30" r="4" fill="#FDEEF3"/><circle cx="45" cy="30" r="2" fill="#E8789A"/>
+        <circle cx="20" cy="32" r="3.5" fill="#FDEEF3"/><circle cx="20" cy="32" r="1.8" fill="#E8789A"/>
+        <circle cx="32" cy="32" r="3.5" fill="#FDEEF3"/><circle cx="32" cy="32" r="1.8" fill="#E8789A"/>
+      </svg>
+    </div>
+    <div class="bn">ちりつもスイーツ</div>
+    <div class="bs">販売管理システム</div>
+  </div>
+  <div class="ns">
+    <div class="nl">MENU</div>
+    <button class="ni active" onclick="nav('dashboard',this)">
+      <svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>
+      <span>ダッシュボード</span>
+    </button>
+    <button class="ni" onclick="nav('orders',this)">
+      <svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span>受注・顧客管理</span>
+    </button>
+    <button class="ni" onclick="nav('products',this)">
+      <svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      <span>商品設定</span>
+    </button>
+    <div class="nl" style="margin-top:16px">DATA</div>
+    <button class="ni" onclick="doBackup()" style="background:rgba(255,255,255,.12);margin-top:2px">
+      <svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <span>バックアップ</span>
+    </button>
+    <button class="ni" onclick="doRestore()" style="margin-top:2px">
+      <svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <span>復元</span>
+    </button>
+  </div>
+  <div class="su2">
+    <div class="av"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+    <div><div class="un">ちりつも</div><div class="us">ちりつもスイーツ</div></div>
+  </div>
+</nav>
+
+<main class="main">
+  <div id="pg-dashboard">
+    <div class="phr">
+      <div><div class="pt">進捗ダッシュボード</div><div class="ps">今日の販売状況をチェック ✨</div></div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <div class="db" id="date-disp"></div>
+        <button class="btn" onclick="doBackup()" style="background:var(--white);color:var(--pink-dark);border:2px solid var(--border);font-size:16px;padding:9px 18px">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          バックアップ
+        </button>
+        <button class="btn btp" onclick="openNewOrder()">＋ 新規受注登録</button>
+      </div>
+    </div>
+    <div class="sg" id="dash-stats"></div>
+    <div style="display:grid;grid-template-columns:1fr 1.9fr;gap:16px" id="dl">
+      <div class="card"><div class="ct" style="font-size:18px;margin-bottom:14px">🍰 在庫状況</div><div id="stock-list"></div></div>
+      <div class="card">
+        <div class="ch"><div class="ct">🧾 最近の注文</div></div>
+        <table class="pc-table"><thead><tr><th>リベネーム / 氏名</th><th>商品</th><th>金額</th><th>ステータス</th><th>操作</th></tr></thead><tbody id="dash-tbody"></tbody></table>
+        <div class="sp-cards" id="dash-cards"></div>
+      </div>
+    </div>
+  </div>
+  <div id="pg-orders" style="display:none">
+    <div class="phr"><div><div class="pt">受注・顧客管理</div><div class="ps">購入者情報・入金・発送の一元管理 💌</div></div></div>
+    <div class="card">
+      <div class="ch">
+        <div class="ct">📋 受注・顧客一覧</div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <input class="si" type="text" id="search" placeholder="🔍 検索..." oninput="renderOrders()">
+          <button class="btn btp" onclick="openNewOrder()">＋ 新規受注登録</button>
+        </div>
+      </div>
+      <div class="fr">
+        <button class="fb on" onclick="setF('all',this)">すべて</button>
+        <button class="fb" onclick="setF('pending',this)">確認中</button>
+        <button class="fb" onclick="setF('paid',this)">入金済</button>
+        <button class="fb" onclick="setF('shipped',this)">発送済</button>
+      </div>
+      <table class="pc-table"><thead><tr><th>登録日</th><th>顧客情報</th><th>住所</th><th>購入商品</th><th>お支払</th><th>ステータス</th><th>操作</th></tr></thead><tbody id="orders-tbody"></tbody></table>
+      <div class="sp-cards" id="orders-cards"></div>
+    </div>
+  </div>
+  <div id="pg-products" style="display:none">
+    <div class="phr"><div><div class="pt">商品設定</div><div class="ps">商品名・価格・在庫数の管理 🎀</div></div></div>
+    <div class="card">
+      <div class="ch"><div class="ct">🍬 登録商品一覧</div><button class="btn btp" onclick="openAddProd()">＋ 新規商品追加</button></div>
+      <table><thead><tr><th>商品名</th><th>単価</th><th>在庫 / 残数</th><th>操作</th></tr></thead><tbody id="prod-tbody"></tbody></table>
+    </div>
+  </div>
+</main>
+
+<div class="mb" id="m-order">
+  <div class="modal">
+    <div class="mt"><span id="m-order-ttl">🛍️ 新規受注の登録</span><button class="mc" onclick="cm('m-order')">&#215;</button></div>
+    <div class="fg"><label class="fl">リベネーム</label><input class="fi" type="text" id="o-rname" placeholder="リベネーム"></div>
+    <div class="fr2"><div class="fg"><label class="fl">氏名<span class="rq">*</span></label><input class="fi" type="text" id="o-name" placeholder="氏名"></div><div></div></div>
+    <div class="fg"><label class="fl">住所<span class="rq">*</span></label><input class="fi" type="text" id="o-addr" placeholder="都道府県〜番地・号"></div>
+    <div class="fg"><label class="fl">購入商品（複数選択可）<span class="rq">*</span></label><div class="pcg" id="o-pchk"></div></div>
+    <div class="dv"></div>
+    <div class="pg">
+      <div><label class="fl">入金（ポイント）</label><input class="fi" type="number" id="o-pt" placeholder="0" min="0" oninput="calcOT()"></div>
+      <div><label class="fl">入金（現金/振込）</label><input class="fi" type="number" id="o-cash" placeholder="0" min="0" oninput="calcOT()"></div>
+    </div>
+    <div class="tb"><span style="color:var(--text-sub)">購入合計</span><strong id="o-tot" style="font-family:'Kaisei Decol',serif;font-size:22px;color:var(--pink-dark)">&#165;0</strong></div>
+    <div id="o-alert"></div>
+    <div class="fg"><label class="fl">メモ（発送指定など）</label><textarea class="fi" id="o-memo" placeholder="例：箱入り希望　など 📦"></textarea></div>
+    <div class="mf"><button class="btn bto" onclick="cm('m-order')">キャンセル</button><button class="btn btp" onclick="saveOrder()">登録する 💕</button></div>
+  </div>
+</div>
+<div class="mb" id="m-pay">
+  <div class="modal" style="max-width:420px">
+    <div class="mt">💰 入金確認<button class="mc" onclick="cm('m-pay')">&#215;</button></div>
+    <div id="p-info" style="font-size:16px;color:var(--text-sub);margin-bottom:12px"></div>
+    <div class="tb"><span>購入金額合計</span><strong id="p-tot" style="font-family:'Kaisei Decol',serif;color:var(--pink-dark)"></strong></div>
+    <div class="pg">
+      <div><label class="fl">ポイント（円換算）</label><input class="fi" type="number" id="p-pt" placeholder="0" min="0" oninput="calcPay()"></div>
+      <div><label class="fl">現金振込（円）</label><input class="fi" type="number" id="p-cash" placeholder="0" min="0" oninput="calcPay()"></div>
+    </div>
+    <div id="p-alert"></div>
+    <div class="mf"><button class="btn bto" onclick="cm('m-pay')">閉じる</button><button class="btn btp" onclick="confPay()">確認済にする ✓</button></div>
+  </div>
+</div>
+<div class="mb" id="m-ship">
+  <div class="modal" style="max-width:400px">
+    <div class="mt">📦 発送確認<button class="mc" onclick="cm('m-ship')">&#215;</button></div>
+    <div id="s-info" style="margin-bottom:14px;font-size:17px;line-height:1.9"></div>
+    <p style="font-size:16px;color:var(--text-sub);margin-bottom:20px">発送完了しましたか？この操作は元に戻せません。</p>
+    <div class="mf"><button class="btn bto" onclick="cm('m-ship')">キャンセル</button><button class="btn btp" onclick="confShip()">発送済にする 🚚</button></div>
+  </div>
+</div>
+<div class="mb" id="m-prod">
+  <div class="modal" style="max-width:380px">
+    <div class="mt"><span id="pm-ttl">🍰 新規商品追加</span><button class="mc" onclick="cm('m-prod')">&#215;</button></div>
+    <div class="fg"><label class="fl">商品名<span class="rq">*</span></label><input class="fi" type="text" id="pn" placeholder="例：どら焼き"></div>
+    <div class="fg"><label class="fl">価格（円）<span class="rq">*</span></label><input class="fi" type="number" id="pp" placeholder="例：500" min="0"></div>
+    <div class="fg"><label class="fl">在庫数<span class="rq">*</span></label><input class="fi" type="number" id="ps" placeholder="例：40" min="1"></div>
+    <div class="mf"><button class="btn bto" onclick="cm('m-prod')">キャンセル</button><button class="btn btp" onclick="saveProd()">保存する 💾</button></div>
+  </div>
+</div>
+
+<script>
+let db=JSON.parse(localStorage.getItem("sweets_v3")||'{"products":[],"orders":[]}');
+let curF="all",eOId=null,ePId=null,payId=null,shipId=null;
+function save(){localStorage.setItem("sweets_v3",JSON.stringify(db));}
+function cm(id){document.getElementById(id).classList.remove("open");payId=shipId=null;}
+function om(id){document.getElementById(id).classList.add("open");}
+function nav(pg,el){
+  ["dashboard","orders","products"].forEach(p=>document.getElementById("pg-"+p).style.display=p===pg?"block":"none");
+  document.querySelectorAll(".ni").forEach(n=>n.classList.remove("active"));
+  el.classList.add("active");
+  if(pg==="dashboard")renderDash();if(pg==="orders")renderOrders();if(pg==="products")renderProds();
+}
+document.getElementById("date-disp").textContent=new Date().toLocaleDateString("ja-JP",{year:"numeric",month:"long",day:"numeric",weekday:"short"});
+function renderDash(){
+  const o=db.orders,t=o.length,paid=o.filter(x=>x.status==="paid").length,ship=o.filter(x=>x.status==="shipped").length,pend=o.filter(x=>x.status==="pending").length;
+  const pct=Math.min(Math.round(t/40*100),100);
+  document.getElementById("dash-stats").innerHTML=`<div class="sc"><div class="sl">🌸 本日の進捗（目標 40件）</div><div class="sv">${t}<span class="su3"> / 40</span></div><div class="pb"><div class="pf" style="width:${pct}%"></div></div><div class="pl"><span>${pct}%</span><span>残${Math.max(0,40-t)}件</span></div></div><div class="sc"><div class="sl">💴 入金完了数</div><div class="sv" style="color:var(--mint-dark)">${paid}<span class="su3"> 件</span></div></div><div class="sc"><div class="sl">⏳ 確認中</div><div class="sv" style="color:#B8860B">${pend}<span class="su3"> 件</span></div></div><div class="sc"><div class="sl">🚚 発送完了数</div><div class="sv" style="color:var(--lavender)">${ship}<span class="su3"> 件</span></div></div>`;
+  document.getElementById("stock-list").innerHTML=!db.products.length?"<p style='color:var(--text-sub);font-size:16px;text-align:center;padding:12px'>商品を登録してください</p>":
+    db.products.map(p=>{const sold=db.orders.reduce((s,o)=>{const i=o.items.find(i=>i.id===p.id);return s+(i?i.qty:0);},0);const rem=Math.max(0,p.stock-sold);const pc=Math.round(rem/p.stock*100);const col=rem===0?"#E74C3C":rem<=5?"#E67E22":"var(--mint)";
+    return `<div class="sti"><div class="str"><span class="stn">${esc(p.name)}</span><span class="stv">残<strong>${rem}</strong>/${p.stock}</span></div><div class="stb"><div class="stf" style="width:${pc}%;background:${col}"></div></div></div>`;}).join("");
+  const rows=db.orders.slice().reverse().slice(0,8);
+  document.getElementById("dash-tbody").innerHTML=rows.length?rows.map(o=>`<tr><td><div style="font-weight:700;font-size:17px">${esc(o.rname||"")}</div><div style="color:var(--text-sub);font-size:15px">${esc(o.name)}</div></td><td style="font-size:17px">${o.items.map(i=>esc(i.name)).join("・")}</td><td style="font-weight:700;font-size:17px;color:var(--pink-dark)">¥${tot(o).toLocaleString()}</td><td>${bdg(o.status)}</td><td><div style="display:flex;gap:6px">${iB(o.id)}${o.status==="paid"?sB(o.id):""}</div></td></tr>`).join(""):"<tr><td colspan='5' style='text-align:center;padding:24px;color:var(--text-sub)'>受注データがありません 🌸</td></tr>";
+  const dc=document.getElementById("dash-cards");
+  if(dc) dc.innerHTML=rows.length?rows.map(o=>`<div class="order-card"><div class="order-card-top"><div><div class="order-card-name">${esc(o.rname||"")} ${esc(o.name)}</div></div>${bdg(o.status)}</div><div class="order-card-row"><span class="order-card-lbl">商品</span><span class="order-card-val">${o.items.map(i=>esc(i.name)).join("・")}</span></div><div class="order-card-row"><span class="order-card-lbl">金額</span><span class="order-card-price">¥${tot(o).toLocaleString()}</span></div><div class="order-card-actions">${iB(o.id)}${o.status==="paid"?sB(o.id):""}</div></div>`).join(""):"<p style='text-align:center;padding:24px;color:var(--text-sub)'>受注データがありません 🌸</p>";
+}
+function setF(f,el){curF=f;document.querySelectorAll(".fb").forEach(b=>b.classList.remove("on"));el.classList.add("on");renderOrders();}
+function renderOrders(){
+  const q=(document.getElementById("search")?.value||"").toLowerCase();
+  let rows=db.orders.slice().reverse();
+  if(curF!=="all")rows=rows.filter(o=>o.status===curF);
+  if(q)rows=rows.filter(o=>[o.rname,o.name,o.addr,...o.items.map(i=>i.name)].join(" ").toLowerCase().includes(q));
+  document.getElementById("orders-tbody").innerHTML=rows.length?rows.map(o=>{const total=tot(o),d=o.createdAt?o.createdAt.split(" ")[0]:"";
+  return `<tr><td style="color:var(--text-sub);font-size:15px">${esc(d)}</td><td><div style="font-weight:700;font-size:17px">${esc(o.rname||"")}</div><div style="color:var(--text-sub);font-size:15px">${esc(o.name)}</div></td><td style="font-size:15px;color:var(--text-sub)">${esc(o.addr)}</td><td style="font-size:15px">${o.items.map(i=>esc(i.name)).join("<br>")}</td><td><div style="font-weight:700;font-size:17px;color:var(--pink-dark)">¥${total.toLocaleString()}</div><div style="font-size:13px;color:var(--text-sub)">P:${(o.paidPoint||0).toLocaleString()} / C:${(o.paidCash||0).toLocaleString()}</div></td><td>${bdg(o.status)}</td><td><div style="display:flex;gap:6px">${iB(o.id)}${eB(o.id)}${o.status==="paid"?sB(o.id):""}</div></td></tr>`;}).join(""):"<tr><td colspan='7' style='text-align:center;padding:24px;color:var(--text-sub)'>該当なし 🌸</td></tr>";
+  const cardsEl=document.getElementById("orders-cards");
+  if(cardsEl) cardsEl.innerHTML=rows.length?rows.map(o=>{const total=tot(o),d=o.createdAt?o.createdAt.split(" ")[0]:"";
+  return `<div class="order-card"><div class="order-card-top"><div><div class="order-card-name">${esc(o.rname||"")} ${esc(o.name)}</div><div class="order-card-rname">${esc(d)}</div></div>${bdg(o.status)}</div><div class="order-card-row"><span class="order-card-lbl">住所</span><span class="order-card-val">${esc(o.addr)}</span></div><div class="order-card-row"><span class="order-card-lbl">商品</span><span class="order-card-val">${o.items.map(i=>esc(i.name)).join("・")}</span></div><div class="order-card-row"><span class="order-card-lbl">金額</span><span class="order-card-price">¥${total.toLocaleString()}</span></div><div class="order-card-row"><span class="order-card-lbl">入金</span><span class="order-card-val">P:${(o.paidPoint||0).toLocaleString()} / C:${(o.paidCash||0).toLocaleString()}</span></div>${o.memo?`<div class="order-card-row"><span class="order-card-lbl">メモ</span><span class="order-card-val">${esc(o.memo)}</span></div>`:""}<div class="order-card-actions">${iB(o.id)}${eB(o.id)}${o.status==="paid"?sB(o.id):""}</div></div>`;}).join(""):"<p style='text-align:center;padding:24px;color:var(--text-sub)'>該当なし 🌸</p>";
+}
+function renderProds(){
+  document.getElementById("prod-tbody").innerHTML=db.products.length?db.products.map(p=>{const sold=db.orders.reduce((s,o)=>{const i=o.items.find(i=>i.id===p.id);return s+(i?i.qty:0);},0);const rem=Math.max(0,p.stock-sold);
+  return `<tr><td style="font-weight:600;font-size:17px">${esc(p.name)}</td><td style="font-weight:700;font-size:17px;color:var(--pink-dark)">¥${p.price.toLocaleString()}</td><td style="font-size:17px">残<strong>${rem}</strong>/${p.stock}</td><td><div style="display:flex;gap:6px"><button class="bi" onclick="openEditProd('${p.id}')">${ie()}</button><button class="bi" onclick="delProd('${p.id}')" style="color:#E74C3C">${it()}</button></div></td></tr>`;}).join(""):"<tr><td colspan='4' style='text-align:center;padding:24px;color:var(--text-sub)'>商品未登録 🍰</td></tr>";
+}
+function openNewOrder(){eOId=null;document.getElementById("m-order-ttl").textContent="🛍️ 新規受注の登録";["o-rname","o-name","o-addr","o-memo"].forEach(id=>document.getElementById(id).value="");document.getElementById("o-pt").value="";document.getElementById("o-cash").value="";document.getElementById("o-alert").innerHTML="";buildChk(null);calcOT();om("m-order");}
+function openEditOrder(id){eOId=id;const o=db.orders.find(o=>o.id===id);document.getElementById("m-order-ttl").textContent="✏️ 受注を編集";document.getElementById("o-rname").value=o.rname||"";document.getElementById("o-name").value=o.name;document.getElementById("o-addr").value=o.addr;document.getElementById("o-memo").value=o.memo||"";document.getElementById("o-pt").value=o.paidPoint||"";document.getElementById("o-cash").value=o.paidCash||"";buildChk(o.items);calcOT();om("m-order");}
+function buildChk(sel){const el=document.getElementById("o-pchk");if(!db.products.length){el.innerHTML="<p style='color:var(--text-sub);font-size:16px;grid-column:1/-1'>先に商品を登録してください</p>";return;}el.innerHTML=db.products.map(p=>{const chk=sel?sel.some(i=>i.id===p.id):false;return `<div class="pci${chk?" sel":""}" id="pci-${p.id}" onclick="togChk('${p.id}')"><div class="pci-in"><input type="checkbox" id="ck-${p.id}" ${chk?"checked":""} onclick="event.stopPropagation();togChk('${p.id}')"><div><div class="pn2">${esc(p.name)}</div><div class="pp2">¥${p.price.toLocaleString()}</div></div></div></div>`;}).join("");}
+function togChk(id){const ck=document.getElementById("ck-"+id);ck.checked=!ck.checked;document.getElementById("pci-"+id).classList.toggle("sel",ck.checked);calcOT();}
+function calcOT(){const sel=db.products.filter(p=>{const e=document.getElementById("ck-"+p.id);return e&&e.checked;});const total=sel.reduce((s,p)=>s+p.price,0);document.getElementById("o-tot").textContent="¥"+total.toLocaleString();const pt=parseInt(document.getElementById("o-pt").value)||0;const cash=parseInt(document.getElementById("o-cash").value)||0;const sum=pt+cash,al=document.getElementById("o-alert");if(!sum||!total){al.innerHTML="";return;}const d=sum-total;al.innerHTML=d===0?"<div class='ab ao'>✅ 合計が一致しています</div>":d<0?`<div class='ab an'>⚠️ 不足 ¥${Math.abs(d).toLocaleString()}　→ 確認中ステータスになります</div>`:`<div class='ab aw'>💡 超過 ¥${d.toLocaleString()}</div>`;}
+function saveOrder(){const rname=document.getElementById("o-rname").value.trim();const name=document.getElementById("o-name").value.trim();const addr=document.getElementById("o-addr").value.trim();const memo=document.getElementById("o-memo").value.trim();const items=db.products.filter(p=>{const e=document.getElementById("ck-"+p.id);return e&&e.checked;}).map(p=>({id:p.id,name:p.name,price:p.price,qty:1}));const pt=parseInt(document.getElementById("o-pt").value)||0;const cash=parseInt(document.getElementById("o-cash").value)||0;if(!name||!addr||!items.length){alert("氏名・住所・購入商品は必須です");return;}const total=items.reduce((s,i)=>s+i.price*i.qty,0);const status=(pt+cash)>0&&(pt+cash)>=total?"paid":"pending";const now=new Date();const dateStr=`${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()} ${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")}`;if(eOId){const o=db.orders.find(o=>o.id===eOId);Object.assign(o,{rname,name,addr,memo,items,paidPoint:pt,paidCash:cash,status});}else{db.orders.push({id:Date.now().toString(),rname,name,addr,memo,items,paidPoint:pt,paidCash:cash,status,createdAt:dateStr});}save();cm("m-order");renderDash();renderOrders();}
+function openPay(id){payId=id;const o=db.orders.find(o=>o.id===id);document.getElementById("p-info").textContent=`${o.rname?o.rname+" ":""}${o.name}　${o.items.map(i=>i.name).join("、")}`;document.getElementById("p-tot").textContent="¥"+tot(o).toLocaleString();document.getElementById("p-pt").value=o.paidPoint||"";document.getElementById("p-cash").value=o.paidCash||"";document.getElementById("p-alert").innerHTML="";calcPay();om("m-pay");}
+function calcPay(){const o=db.orders.find(o=>o.id===payId);if(!o)return;const total=tot(o);const pt=parseInt(document.getElementById("p-pt").value)||0;const cash=parseInt(document.getElementById("p-cash").value)||0;const sum=pt+cash,al=document.getElementById("p-alert");if(!sum){al.innerHTML="";return;}const d=sum-total;al.innerHTML=d===0?"<div class='ab ao'>✅ 合計が一致しています（入金確認可）</div>":d<0?`<div class='ab an'>⚠️ 不足 ¥${Math.abs(d).toLocaleString()}　→ 確認中のままになります</div>`:`<div class='ab aw'>💡 超過 ¥${d.toLocaleString()}</div>`;}
+function confPay(){const o=db.orders.find(o=>o.id===payId);if(!o)return;const pt=parseInt(document.getElementById("p-pt").value)||0;const cash=parseInt(document.getElementById("p-cash").value)||0;o.paidPoint=pt;o.paidCash=cash;o.status=(pt+cash)>0&&(pt+cash)>=tot(o)?"paid":"pending";save();cm("m-pay");renderDash();renderOrders();alert(o.status==="paid"?"💕 入金確認済にしました":"⚠️ 不足のため確認中のままです");}
+function openShip(id){shipId=id;const o=db.orders.find(o=>o.id===id);document.getElementById("s-info").innerHTML=`<strong>${esc(o.rname?o.rname+" ":"")}${esc(o.name)}</strong><br><span style="color:var(--text-sub);font-size:16px">${esc(o.addr)}<br>${o.items.map(i=>esc(i.name)).join("、")}</span>`;om("m-ship");}
+function confShip(){const o=db.orders.find(o=>o.id===shipId);if(o){o.status="shipped";o.shippedAt=new Date().toLocaleString("ja-JP");}save();cm("m-ship");renderDash();renderOrders();}
+function openAddProd(){ePId=null;document.getElementById("pm-ttl").textContent="🍰 新規商品追加";["pn","pp","ps"].forEach(id=>document.getElementById(id).value="");om("m-prod");}
+function openEditProd(id){ePId=id;const p=db.products.find(p=>p.id===id);document.getElementById("pm-ttl").textContent="✏️ 商品を編集";document.getElementById("pn").value=p.name;document.getElementById("pp").value=p.price;document.getElementById("ps").value=p.stock;om("m-prod");}
+function saveProd(){const name=document.getElementById("pn").value.trim();const price=parseInt(document.getElementById("pp").value)||0;const stock=parseInt(document.getElementById("ps").value)||0;if(!name||price<=0||stock<=0){alert("商品名・価格・在庫数を入力してください");return;}if(ePId){const p=db.products.find(p=>p.id===ePId);Object.assign(p,{name,price,stock});}else db.products.push({id:Date.now().toString(),name,price,stock});save();cm("m-prod");renderProds();}
+function delProd(id){if(!confirm("削除しますか？"))return;db.products=db.products.filter(p=>p.id!==id);save();renderProds();}
+function tot(o){return o.items.reduce((s,i)=>s+i.price*i.qty,0);}
+function esc(s){if(!s)return "";return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function bdg(s){if(s==="pending")return "<span class='badge bp'>⏳ 確認中</span>";if(s==="paid")return "<span class='badge bk'>✅ 入金済</span>";return "<span class='badge bsh'>📦 発送済</span>";}
+function ie(){return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;}
+function it(){return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3,6 5,6 21,6"/><path d="M19,6l-1,14a2,2,0,0,1-2,2H8a2,2,0,0,1-2-2L5,6"/><path d="M10,11v6M14,11v6M9,6V4a1,1,0,0,1,1-1h4a1,1,0,0,1,1,1V6"/></svg>`;}
+function im(){return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>`;}
+function ish(){return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>`;}
+function iB(id){return `<button class="bi" onclick="openPay('${id}')" title="入金確認">${im()}</button>`;}
+function eB(id){return `<button class="bi" onclick="openEditOrder('${id}')" title="編集">${ie()}</button>`;}
+function sB(id){return `<button class="bi big" onclick="openShip('${id}')" title="発送完了">${ish()}</button>`;}
+function adjL(){const el=document.getElementById("dl");if(el)el.style.gridTemplateColumns=window.innerWidth<=700?"1fr":"1fr 1.9fr";}
+
+function doBackup(){
+  const now=new Date();
+  const y=now.getFullYear();
+  const m=String(now.getMonth()+1).padStart(2,"0");
+  const d=String(now.getDate()).padStart(2,"0");
+  const fname=`販売管理バックアップ_${y}${m}${d}.json`;
+  const data=JSON.stringify(db,null,2);
+  const blob=new Blob([data],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download=fname;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  alert(`💾 バックアップ完了！\nファイル名：${fname}\nダウンロードフォルダに保存されました。`);
+}
+
+function doRestore(){
+  const inp=document.createElement("input");
+  inp.type="file";
+  inp.accept=".json";
+  inp.onchange=e=>{
+    const file=e.target.files[0];
+    if(!file)return;
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      try{
+        const parsed=JSON.parse(ev.target.result);
+        if(!parsed.products||!parsed.orders){alert("⚠️ このファイルはバックアップデータではありません。");return;}
+        if(!confirm(`📂 「${file.name}」からデータを復元します。\n現在のデータは上書きされます。よろしいですか？`))return;
+        db=parsed;
+        save();
+        renderDash();
+        alert("✅ 復元が完了しました！");
+      }catch(err){alert("⚠️ ファイルの読み込みに失敗しました。");}
+    };
+    reader.readAsText(file);
+  };
+  inp.click();
+}
+
+window.addEventListener("resize",adjL);adjL();renderDash();
+</script>
+</body>
+</html>
